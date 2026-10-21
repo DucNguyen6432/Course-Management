@@ -153,3 +153,8 @@ dialog h2 { margin-bottom: 14px; color: var(--navy); }
 .aux { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: -4px 0 16px; font-size: 13.5px; }
 .aux label { display: flex; align-items: center; gap: 6px; margin: 0; font-weight: 400; }
 .link { background: none; border: 0; padding: 0; color: var(--navy-2); text-decoration: underline; cursor: pointer; }
+
+/* ---- Sign in / Create account views ---- */
+#auth-title { font-size: 22px; margin-bottom: 12px; }
+.btn.wide { width: 100%; padding: 10px 14px; }
+.switch { text-align: center; margin: 14px 0 0; font-size: 14px; color: var(--muted); }
