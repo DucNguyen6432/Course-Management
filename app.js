@@ -123,12 +123,6 @@ $("#logout").addEventListener("click", safe(async () => {
   else { localStorage.removeItem("cm_user"); endSession(); }
 }));
 
-if (isConfigured) {
-  fb.onAuthStateChanged(auth, (fu) => fu ? startSession({ uid: fu.uid, name: fu.email.split("@")[0] }) : endSession());
-} else {
-  const saved = localStorage.getItem("cm_user");
-  if (saved) startSession({ uid: "local_" + saved.toLowerCase(), name: saved });
-}
 
 /* ---------- Rendering ---------- */
 /** One course as a card (grid) or a row (list); the markup is shared and CSS lays it out. */
@@ -253,3 +247,13 @@ $("#course-form").addEventListener("submit", safe(async (e) => {
   });
   dlg.close(); toast(`Saved ${code}`);
 }));
+
+/* ---------- Startup ----------
+ * Runs last on purpose: restoring a session calls render(), which needs every
+ * const/function above (LABEL, visible, collection, ...) to be initialized. */
+if (isConfigured) {
+  fb.onAuthStateChanged(auth, (fu) => fu ? startSession({ uid: fu.uid, name: fu.email.split("@")[0] }) : endSession());
+} else {
+  const saved = localStorage.getItem("cm_user");
+  if (saved) startSession({ uid: "local_" + saved.toLowerCase(), name: saved });
+}
