@@ -107,14 +107,34 @@ function endSession() {
   $("#app-view").hidden = true; $("#auth-view").hidden = false;
 }
 
+/* ---------- Demo-mode accounts (no Firebase keys) ----------
+ * Passwords are salted + SHA-256 hashed and stored in this browser only.
+ * This stops casual mix-ups, but it is NOT real security: use Firebase for that. */
+async function sha256(text) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+async function demoAuth(name, pass, mode) {
+  const key = "cm_account_" + name.toLowerCase();
+  const stored = JSON.parse(localStorage.getItem(key) || "null");
+  const salt = stored?.salt ?? crypto.randomUUID();
+  const hash = await sha256(salt + pass);
+  if (mode === "signup") {
+    if (stored) throw new Error("That username already has an account in this browser. Sign in instead.");
+    localStorage.setItem(key, JSON.stringify({ salt, hash }));
+  } else {
+    if (!stored) throw new Error("No account found for that username. Choose Create account first.");
+    if (stored.hash !== hash) throw new Error("Incorrect password.");
+  }
+  localStorage.setItem("cm_user", name);
+  startSession({ uid: "local_" + name.toLowerCase(), name });
+}
+
 $("#demo-note").hidden = isConfigured;
 $("#auth-form").addEventListener("submit", safe(async (e) => {
   e.preventDefault();
   const name = $("#f-user").value.trim(), pass = $("#f-pass").value, mode = e.submitter?.value;
-  if (!isConfigured) { // demo mode: no real auth
-    localStorage.setItem("cm_user", name);
-    return startSession({ uid: "local_" + name.toLowerCase(), name });
-  }
+  if (!isConfigured) return demoAuth(name, pass, mode); // demo mode: local accounts
   if (mode === "signup") { justRegistered = true; await fb.createUserWithEmailAndPassword(auth, toEmail(name), pass); }
   else await fb.signInWithEmailAndPassword(auth, toEmail(name), pass);
 }));
