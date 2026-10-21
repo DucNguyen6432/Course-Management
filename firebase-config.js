@@ -26,12 +26,13 @@ export * from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 export * from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID",
+  apiKey: "AIzaSyC7mJv1glBPxwWndjlADVZ4ZXbzALtjS2U",
+  authDomain: "credit-manager-a8ef3.firebaseapp.com",
+  projectId: "credit-manager-a8ef3",
+  storageBucket: "credit-manager-a8ef3.firebasestorage.app",
+  messagingSenderId: "959533588632",
+  appId: "1:959533588632:web:c2d1d1f08bd831824f70ed",
+  measurementId: "G-6S70LP4JHR", // only used by Analytics, which this app does not load
 };
 
 export const isConfigured = !firebaseConfig.apiKey.startsWith("YOUR_");
