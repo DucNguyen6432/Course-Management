@@ -136,10 +136,25 @@ async function demoAuth(name, pass, mode, phone = "") {
 }
 
 $("#demo-note").hidden = isConfigured;
-$("#phone-wrap").hidden = isConfigured; // backup phone is a demo-mode feature
+// Sign in and Create account are two views of the same form.
+let authMode = "signin";
+function setAuthMode(mode) {
+  authMode = mode;
+  const up = mode === "signup";
+  $("#auth-title").textContent = up ? "Create account" : "Sign in";
+  $("#auth-submit").textContent = up ? "Create account" : "Sign in";
+  $("#auth-switch-text").textContent = up ? "Already have an account?" : "New here?";
+  $("#auth-switch").textContent = up ? "Sign in" : "Create account";
+  $("#phone-wrap").hidden = !up || isConfigured; // backup phone: sign-up only, demo mode only
+  $("#forgot").hidden = up;                      // forgot password: sign-in only
+  $("#f-pass").autocomplete = up ? "new-password" : "current-password";
+  $("#f-phone").value = "";
+}
+$("#auth-switch").addEventListener("click", () => setAuthMode(authMode === "signin" ? "signup" : "signin"));
+setAuthMode("signin");
 $("#auth-form").addEventListener("submit", safe(async (e) => {
   e.preventDefault();
-  const name = $("#f-user").value.trim(), pass = $("#f-pass").value, mode = e.submitter?.value;
+  const name = $("#f-user").value.trim(), pass = $("#f-pass").value, mode = authMode;
   if (!isConfigured) return demoAuth(name, pass, mode, $("#f-phone").value); // demo mode: local accounts
   if (mode === "signup") { justRegistered = true; await fb.createUserWithEmailAndPassword(auth, toEmail(name), pass); }
   else await fb.signInWithEmailAndPassword(auth, toEmail(name), pass);
