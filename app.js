@@ -8,10 +8,10 @@ import { evaluatePrereqs, validatePrereqs, normalizeCode } from "./parser.js";
 
 const { auth, db, isConfigured } = fb;
 
-
 /* ---------- Constants & demo data ---------- */
 const TERMS = ["Fall Q 26-27", "Winter Q 26-27", "Spring Q 26-27", "Summer Q 26-27"];
 const NONE = "Not Planned";
+const LABEL = { completed: "Completed", available: "Available", locked: "Locked" };
 const mk = (code, title, credits, description, prereqs, isMainMajor, completed, term) =>
   ({ code, title, credits, description, prereqs, isMainMajor, completed, term });
 const DEMO = [
@@ -126,8 +126,6 @@ if (isConfigured) {
 }
 
 /* ---------- Rendering ---------- */
-const LABEL = { completed: "Completed", available: "Available", locked: "Locked" };
-
 function cardHTML(c, done, planner = false, pool = false) {
   const st = statusOf(c, done), warn = termWarning(c);
   const moves = [NONE, ...TERMS].map((t) => `<option ${t === c.term ? "selected" : ""}>${t}</option>`).join("");
