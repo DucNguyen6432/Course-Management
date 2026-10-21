@@ -114,14 +114,19 @@ async function sha256(text) {
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
-async function demoAuth(name, pass, mode) {
+async function demoAuth(name, pass, mode, phone = "") {
   const key = "cm_account_" + name.toLowerCase();
   const stored = JSON.parse(localStorage.getItem(key) || "null");
   const salt = stored?.salt ?? crypto.randomUUID();
   const hash = await sha256(salt + pass);
   if (mode === "signup") {
     if (stored) throw new Error("That username already has an account in this browser. Sign in instead.");
-    localStorage.setItem(key, JSON.stringify({ salt, hash }));
+    const acct = { salt, hash };
+    if (phone) { // backup phone acts as a second, hashed recovery secret
+      acct.phoneSalt = crypto.randomUUID();
+      acct.phoneHash = await sha256(acct.phoneSalt + phone);
+    }
+    localStorage.setItem(key, JSON.stringify(acct));
   } else {
     if (!stored) throw new Error("No account found for that username. Choose Create account first.");
     if (stored.hash !== hash) throw new Error("Incorrect password.");
@@ -131,10 +136,11 @@ async function demoAuth(name, pass, mode) {
 }
 
 $("#demo-note").hidden = isConfigured;
+$("#phone-wrap").hidden = isConfigured; // backup phone is a demo-mode feature
 $("#auth-form").addEventListener("submit", safe(async (e) => {
   e.preventDefault();
   const name = $("#f-user").value.trim(), pass = $("#f-pass").value, mode = e.submitter?.value;
-  if (!isConfigured) return demoAuth(name, pass, mode); // demo mode: local accounts
+  if (!isConfigured) return demoAuth(name, pass, mode, $("#f-phone").value); // demo mode: local accounts
   if (mode === "signup") { justRegistered = true; await fb.createUserWithEmailAndPassword(auth, toEmail(name), pass); }
   else await fb.signInWithEmailAndPassword(auth, toEmail(name), pass);
 }));
@@ -279,11 +285,35 @@ $("#forgot").addEventListener("click", safe(async () => {
     return toast(`If an account exists, a reset link was sent to ${toEmail(name)}.`);
   }
   const key = "cm_account_" + name.toLowerCase();
-  if (!localStorage.getItem(key)) return toast("No account found for that username in this browser.");
+  const acct = JSON.parse(localStorage.getItem(key) || "null");
+  if (!acct) return toast("No account found for that username in this browser.");
+  if (acct.phoneHash) return openReset(name); // phone on file: must be verified
   if (confirm(`Reset the password for ${name}? Your courses are kept. You will choose a new password with Create account.`)) {
     localStorage.removeItem(key); // demo mode only: removes the stored hash, not the course data
     toast("Password cleared. Enter a new password and choose Create account.");
   }
+}));
+
+/* ---------- Phone-verified password reset (demo mode) ---------- */
+let resetFor = null;
+function openReset(name) {
+  resetFor = name;
+  $("#r-name").textContent = name;
+  $("#r-phone").value = ""; $("#r-pass").value = ""; $("#r-error").hidden = true;
+  $("#reset-dialog").showModal();
+}
+$("#r-cancel").addEventListener("click", () => $("#reset-dialog").close());
+// Keep both phone fields numeric
+["#f-phone", "#r-phone"].forEach((sel) => $(sel).addEventListener("input", (e) => { e.target.value = e.target.value.replace(/\D/g, ""); }));
+
+$("#reset-form").addEventListener("submit", safe(async (e) => {
+  e.preventDefault();
+  const key = "cm_account_" + resetFor.toLowerCase(), acct = JSON.parse(localStorage.getItem(key) || "null");
+  const phoneOk = acct?.phoneHash && (await sha256(acct.phoneSalt + $("#r-phone").value)) === acct.phoneHash;
+  if (!phoneOk) { $("#r-error").textContent = "That phone number doesn't match the one saved for this account."; $("#r-error").hidden = false; return; }
+  const salt = crypto.randomUUID();
+  localStorage.setItem(key, JSON.stringify({ ...acct, salt, hash: await sha256(salt + $("#r-pass").value) }));
+  $("#reset-dialog").close(); toast("Password updated. You can sign in now.");
 }));
 
 /* ---------- Startup ----------
