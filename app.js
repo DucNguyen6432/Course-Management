@@ -8,6 +8,12 @@ import { evaluatePrereqs, validatePrereqs, normalizeCode } from "./parser.js";
 
 const { auth, db, isConfigured } = fb;
 
+const LABEL = {
+    completed: "Completed",
+    available: "Available",
+    locked: "Locked"
+};
+
 /* ---------- Constants & demo data ---------- */
 const TERMS = ["Fall Q 26-27", "Winter Q 26-27", "Spring Q 26-27", "Summer Q 26-27"];
 const NONE = "Not Planned";
@@ -125,7 +131,7 @@ if (isConfigured) {
 }
 
 /* ---------- Rendering ---------- */
-const LABEL = { completed: "Completed", available: "Available", locked: "Locked" };
+// const LABEL = { completed: "Completed", available: "Available", locked: "Locked" };
 
 function cardHTML(c, done, planner = false, pool = false) {
   const st = statusOf(c, done), warn = termWarning(c);
