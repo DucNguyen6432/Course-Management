@@ -10,6 +10,7 @@
   --line: #dde1e8;
   --blue: #1d4ed8;  --blue-bg: #e3ebff;
   --green: #15803d; --green-bg: #dcf5e4;
+  --amber: #8a4b00; --amber-bg: #ffe27a; --amber-line: #f5a300;
   --red: #b42318;   --red-bg: #fde7e4;
   --warn: #8a5a00;  --warn-bg: #fff3d1;
   --radius: 10px;
@@ -110,3 +111,40 @@ dialog h2 { margin-bottom: 14px; color: var(--navy); }
   .two { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/* ---- In progress status ---- */
+.card.progress { border-left-color: var(--amber-line); }
+.badge.progress { color: var(--amber); background: var(--amber-bg); letter-spacing: .03em; }
+.stats .prog dd { color: #ffa94d; }
+.btn.active { background: var(--amber-bg); border-color: var(--amber-line); color: var(--amber); }
+
+/* ---- Card internals ---- */
+.id span { display: block; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+.chip { font-size: 12px; background: #eef0f4; color: var(--ink); padding: 2px 8px; border-radius: 6px; }
+
+/* ---- Toolbar: status filter + grid/list switch ---- */
+.toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+.toolbar label { display: flex; align-items: center; gap: 8px; margin: 0; }
+.toolbar select { width: auto; margin: 0; }
+.view-toggle { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface); }
+.view-btn { border: 0; background: none; padding: 7px 14px; cursor: pointer; font-weight: 500; color: var(--muted); }
+.view-btn + .view-btn { border-left: 1px solid var(--line); }
+.view-btn[aria-pressed=true] { background: var(--navy); color: #fff; }
+
+/* ---- List view: one structured full-width row per course ---- */
+.list { display: flex; flex-direction: column; gap: 8px; }
+.list .card { display: grid; grid-template-columns: minmax(180px, 1.4fr) minmax(200px, 1.6fr) 110px auto; align-items: center; gap: 6px 16px; padding: 10px 14px; }
+.list .card header { display: contents; }
+.list .card .id { order: 1; }
+.list .card .meta { order: 2; }
+.list .card .badge { order: 3; justify-self: start; }
+.list .card .actions { order: 4; margin-top: 0; justify-content: flex-end; }
+.list .card .desc { display: none; }
+.list .card .warn { order: 5; grid-column: 1 / -1; }
+@media (max-width: 860px) {
+  .list .card { grid-template-columns: 1fr auto; }
+  .list .card .badge { order: 2; }
+  .list .card .meta { order: 3; grid-column: 1 / -1; }
+  .list .card .actions { order: 4; grid-column: 1 / -1; justify-content: flex-start; }
+}
