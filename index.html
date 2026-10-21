@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Credit Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ===== Auth ===== -->
+  <section id="auth-view">
+    <form id="auth-form" class="auth-card" autocomplete="on">
+      <h1>Credit Manager</h1>
+      <p class="sub">Track credits, check prerequisites, and plan every quarter.</p>
+      <p class="note" role="note">Please enter your Drexel Username, but create a DIFFERENT password from your actual Drexel account password for security reasons.</p>
+      <label>Drexel username or email
+        <input id="f-user" required autocomplete="username" placeholder="abc123">
+      </label>
+      <label>Password
+        <input id="f-pass" type="password" required minlength="6" autocomplete="current-password">
+      </label>
+      <div class="row">
+        <button class="btn primary" value="signin">Sign in</button>
+        <button class="btn" value="signup">Create account</button>
+      </div>
+      <p id="demo-note" class="muted" hidden>Demo mode: Firebase keys are not set, so data stays in this browser. Add your keys in <code>firebase-config.js</code> to enable cloud sync.</p>
+    </form>
+  </section>
+
+  <!-- ===== App ===== -->
+  <div id="app-view" hidden>
+    <header class="top">
+      <div class="brand">
+        <h1>Credit Manager</h1>
+        <span class="user">Signed in as <strong id="username"></strong></span>
+      </div>
+      <dl class="stats">
+        <div><dt>Completed credits</dt><dd id="s-done">0</dd></div>
+        <div><dt>Planned credits</dt><dd id="s-plan">0</dd></div>
+        <div><dt>Total credits</dt><dd id="s-total">0</dd></div>
+      </dl>
+      <button id="logout" class="btn ghost">Log out</button>
+    </header>
+
+    <nav class="tabs" role="tablist">
+      <button role="tab" data-tab="major" aria-selected="true">Main Major</button>
+      <button role="tab" data-tab="plan" aria-selected="false">Academic Plan</button>
+      <button role="tab" data-tab="pool" aria-selected="false">Course Pool</button>
+    </nav>
+
+    <main>
+      <section id="tab-major" class="panel"></section>
+      <section id="tab-plan" class="panel" hidden></section>
+      <section id="tab-pool" class="panel" hidden>
+        <div class="bar">
+          <h2>All courses</h2>
+          <button id="add-course" class="btn primary">Add course</button>
+        </div>
+        <div id="pool-list" class="grid"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ===== Course dialog ===== -->
+  <dialog id="course-dialog">
+    <form id="course-form" method="dialog">
+      <h2 id="dlg-title">Add course</h2>
+      <div class="two">
+        <label>Course code<input id="c-code" required placeholder="CS 265"></label>
+        <label>Credits<input id="c-credits" type="number" min="0" max="12" step="0.5" required value="3"></label>
+      </div>
+      <label>Title<input id="c-title" required placeholder="Advanced Programming Tools and Techniques"></label>
+      <label>Description<textarea id="c-desc" rows="2"></textarea></label>
+      <label>Prerequisites <small>use AND, OR and parentheses</small>
+        <input id="c-prereq" placeholder="(CS 171 AND CS 172) OR INFO 152">
+      </label>
+      <label>Plan term
+        <select id="c-term"></select>
+      </label>
+      <div class="checks">
+        <label><input id="c-major" type="checkbox"> Part of main major</label>
+        <label><input id="c-done" type="checkbox"> Completed</label>
+      </div>
+      <p id="c-error" class="error" hidden></p>
+      <div class="row end">
+        <button type="button" id="c-cancel" class="btn">Cancel</button>
+        <button class="btn primary" value="save">Save course</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
