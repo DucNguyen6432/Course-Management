@@ -127,11 +127,6 @@ if (isConfigured) {
 /* ---------- Rendering ---------- */
 const LABEL = { completed: "Completed", available: "Available", locked: "Locked" };
 
-const LABEL = {
-    completed: "Completed",
-    available: "Available",
-    locked: "Locked"
-};
 function cardHTML(c, done, planner = false, pool = false) {
   const st = statusOf(c, done), warn = termWarning(c);
   const moves = [NONE, ...TERMS].map((t) => `<option ${t === c.term ? "selected" : ""}>${t}</option>`).join("");
