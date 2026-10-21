@@ -40,6 +40,7 @@
       </div>
       <dl class="stats">
         <div><dt>Completed credits</dt><dd id="s-done">0</dd></div>
+        <div class="prog"><dt>In progress credits</dt><dd id="s-prog">0</dd></div>
         <div><dt>Planned credits</dt><dd id="s-plan">0</dd></div>
         <div><dt>Total credits</dt><dd id="s-total">0</dd></div>
       </dl>
@@ -53,14 +54,42 @@
     </nav>
 
     <main>
-      <section id="tab-major" class="panel"></section>
+      <section id="tab-major" class="panel">
+      <div class="toolbar">
+        <label>Status
+          <select class="status-filter" aria-label="Filter by status">
+            <option value="all">All Statuses</option><option value="completed">Completed</option>
+            <option value="available">Available</option><option value="progress">In Progress</option>
+            <option value="locked">Locked</option>
+          </select>
+        </label>
+        <div class="view-toggle" role="group" aria-label="Layout">
+          <button class="view-btn" data-view="grid" aria-pressed="true">Grid</button>
+          <button class="view-btn" data-view="list" aria-pressed="false">List</button>
+        </div>
+      </div>
+      <div id="major-list"></div>
+      </section>
       <section id="tab-plan" class="panel" hidden></section>
       <section id="tab-pool" class="panel" hidden>
         <div class="bar">
           <h2>All courses</h2>
           <button id="add-course" class="btn primary">Add course</button>
         </div>
-        <div id="pool-list" class="grid"></div>
+        <div class="toolbar">
+        <label>Status
+          <select class="status-filter" aria-label="Filter by status">
+            <option value="all">All Statuses</option><option value="completed">Completed</option>
+            <option value="available">Available</option><option value="progress">In Progress</option>
+            <option value="locked">Locked</option>
+          </select>
+        </label>
+        <div class="view-toggle" role="group" aria-label="Layout">
+          <button class="view-btn" data-view="grid" aria-pressed="true">Grid</button>
+          <button class="view-btn" data-view="list" aria-pressed="false">List</button>
+        </div>
+      </div>
+        <div id="pool-list"></div>
       </section>
     </main>
   </div>
@@ -84,6 +113,7 @@
       <div class="checks">
         <label><input id="c-major" type="checkbox"> Part of main major</label>
         <label><input id="c-done" type="checkbox"> Completed</label>
+        <label><input id="c-prog" type="checkbox"> In progress</label>
       </div>
       <p id="c-error" class="error" hidden></p>
       <div class="row end">
