@@ -268,6 +268,24 @@ $("#course-form").addEventListener("submit", safe(async (e) => {
   dlg.close(); toast(`Saved ${code}`);
 }));
 
+/* ---------- Show password + forgot password ---------- */
+$("#show-pass").addEventListener("change", (e) => { $("#f-pass").type = e.target.checked ? "text" : "password"; });
+
+$("#forgot").addEventListener("click", safe(async () => {
+  const name = $("#f-user").value.trim();
+  if (!name) return toast("Enter your username first, then choose Forgot password.");
+  if (isConfigured) { // Firebase emails a reset link; nobody (including us) can read the old password
+    await fb.sendPasswordResetEmail(auth, toEmail(name));
+    return toast(`If an account exists, a reset link was sent to ${toEmail(name)}.`);
+  }
+  const key = "cm_account_" + name.toLowerCase();
+  if (!localStorage.getItem(key)) return toast("No account found for that username in this browser.");
+  if (confirm(`Reset the password for ${name}? Your courses are kept. You will choose a new password with Create account.`)) {
+    localStorage.removeItem(key); // demo mode only: removes the stored hash, not the course data
+    toast("Password cleared. Enter a new password and choose Create account.");
+  }
+}));
+
 /* ---------- Startup ----------
  * Runs last on purpose: restoring a session calls render(), which needs every
  * const/function above (LABEL, visible, collection, ...) to be initialized. */
