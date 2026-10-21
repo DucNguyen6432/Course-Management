@@ -16,6 +16,7 @@
     <form id="auth-form" class="auth-card" autocomplete="on">
       <h1>Credit Manager</h1>
       <p class="sub">Track credits, check prerequisites, and plan every quarter.</p>
+      <h2 id="auth-title">Sign in</h2>
       <p class="note" role="note">Please enter your Drexel Username, but create a DIFFERENT password from your actual Drexel account password for security reasons.</p>
       <label>Drexel username or email
         <input id="f-user" required autocomplete="username" placeholder="abc123">
@@ -30,10 +31,8 @@
         <label><input id="show-pass" type="checkbox"> Show password</label>
         <button type="button" id="forgot" class="link">Forgot password?</button>
       </div>
-      <div class="row">
-        <button class="btn primary" value="signin">Sign in</button>
-        <button class="btn" value="signup">Create account</button>
-      </div>
+      <button id="auth-submit" class="btn primary wide">Sign in</button>
+      <p class="switch"><span id="auth-switch-text">New here?</span> <button type="button" id="auth-switch" class="link">Create account</button></p>
       <p id="demo-note" class="muted" hidden>Demo mode: Firebase keys are not set, so accounts and data stay in this browser only (passwords are checked locally). Add your keys in <code>firebase-config.js</code> to enable cloud sync.</p>
     </form>
   </section>
